@@ -85,7 +85,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
             if(repository['path'] == path[0]):
                 if 'deploy' in repository:
                      if(not self.quiet):
-                         print 'Executing deploy command'
+                         print '\nExecuting deploy command'
                      call(['cd "' + path[0] + '" && ' + repository['deploy']], shell=True)
                 break
 
