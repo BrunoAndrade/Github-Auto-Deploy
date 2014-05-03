@@ -46,7 +46,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
                 self.deploy(path)
                 deployed += 1
         if(deployed > 0):
-            respond()
+            self.respond()
 
     def parseRequest(self):
         length = int(self.headers.getheader('content-length'))
