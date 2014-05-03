@@ -44,7 +44,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
             for path in paths:
                 self.pull(path)
                 self.deploy(path)
-                deployed++
+                deployed += 1
         if(deployed > 0):
             respond()
 
