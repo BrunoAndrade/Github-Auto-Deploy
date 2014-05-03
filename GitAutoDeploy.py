@@ -50,6 +50,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         if 'payload' in post:
             items = []
             for itemString in post['payload']:
+                print "\nitemString = ",itemString
                 item = json.loads(itemString)
                 items.append((item['repository']['url'], item['ref']))
             return items
