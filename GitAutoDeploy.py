@@ -47,16 +47,12 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         length = int(self.headers.getheader('content-length'))
         body = self.rfile.read(length)
         post = urlparse.parse_qs(body)
-        if 'payload' in post:
-            items = []
-            for itemString in post['payload']:
-                print "\nitemString = ",itemString
-                item = json.loads(itemString)
-                items.append((item['repository']['url'], item['ref']))
-            return items
-        else:
-            print "Unknown request type received, body: ",body
-        return []
+        items = []
+        for itemString in post['payload']:
+            item = json.loads(itemString)
+            items.append((item['repository']['url'], item['ref']))
+        return items
+
     def getMatchingPaths(self, repoUrl, ref):
         res = []
         config = self.getConfig()
