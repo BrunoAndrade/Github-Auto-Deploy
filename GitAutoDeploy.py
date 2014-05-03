@@ -57,7 +57,8 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         res = []
         config = self.getConfig()
         for repository in config['repositories']:
-            print "Comparing ", repoUrl, "with ", repository['url']
+            print "\nComparing ", repoUrl, "with ", repository['url']
+            print "\nAnd Comparing ", repository.get('ref', ''), "with ", ('', ref)
             if(repository['url'] == repoUrl and repository.get('ref', '') in ('', ref)):
                 res.append((repository['path'], repository.get('ref','')))
         return res
