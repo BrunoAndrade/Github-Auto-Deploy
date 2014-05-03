@@ -1,4 +1,4 @@
-![http://logsol.github.com/Github-Auto-Deploy/images/Github-Auto-Deploy.png](Github Auto Deploy Diagram)
+![Github Auto Deploy Diagram](http://logsol.github.com/Github-Auto-Deploy/images/Github-Auto-Deploy.png)
 
 # What is it?
 
