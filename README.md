@@ -19,7 +19,7 @@ To set it up, do the following:
 
 Once you add the webhook, the first message will fail (at the moment the project looks for a valid push request and fails otherwise).
 
-## How this works
+## How it Works
 
 When someone pushes changes into Github, it sends a json file to the service hook url. 
 It contains information about the repository that was updated.
@@ -33,7 +33,18 @@ Make sure that you start the server as the user that is allowed to pull from the
 
 # Config File
 
-The config file has the following fields:
+The config file has the following fields.
+
+	{
+		"port": <Port>, 
+		"repositories": 
+		[{
+			"url": "https://github.com/PaulKinlan/Github-Auto-Deploy",
+			"path": "/home/user/somedirectory/Github-Auto-Deploy/",
+			"ref": "refs/heads/master",
+			"deploy": "echo Deploying Github-Auto-Deploy"
+		}]
+	}
 
 ## port
 
@@ -58,14 +69,3 @@ You can use the ref to specify the branch you want to listen for. An example if 
 ### deploy
 
 Deploy will run the string as a bash script, allowing you to run an external script.
-
-	{
-		"port": <Port>, 
-		"repositories": 
-		[{
-			"url": "https://github.com/PaulKinlan/Github-Auto-Deploy",
-			"path": "/home/user/somedirectory/Github-Auto-Deploy/",
-			"ref": "refs/heads/master",
-			"deploy": "echo Deploying Github-Auto-Deploy"
-		}]
-	}
