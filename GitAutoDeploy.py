@@ -36,13 +36,17 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         if(not GitAutoDeploy.quiet):
             print "\nPost request received"
         url_refs = self.parseRequest()
+        deployed = 0
         for url, ref in url_refs:
             paths = self.getMatchingPaths(url, ref)
             if(not GitAutoDeploy.quiet):
-                print "\nFound ",len(paths)," matching paths"
+                print "\nFound ",len(paths)," matching path(s)"
             for path in paths:
                 self.pull(path)
                 self.deploy(path)
+                deployed++
+        if(deployed > 0):
+            respond()
 
     def parseRequest(self):
         length = int(self.headers.getheader('content-length'))
@@ -60,7 +64,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         for repository in config['repositories']:
             if(not GitAutoDeploy.quiet):
                 print "\nComparing ", repoUrl, "with ", repository['url']
-                print "\nAnd Comparing ", repository.get('ref', ''), "with ", ('', ref)
+                print "Comparing ", repository.get('ref', ''), "with ", ('', ref)
             if(repository['url'] == repoUrl and repository.get('ref', '') in ('', ref)):
                 res.append((repository['path'], repository.get('ref','')))
         return res
@@ -72,8 +76,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
 
     def pull(self, path):
         if(not self.quiet):
-            print "\nPost push request received"
-            print "Updating %s refspec %s" % path
+            print "\nPulling update for %s refspec %s" % path
         call(['cd "' + path[0] + '" && git pull origin "' + path[1] +'"'], shell=True)
 
     def deploy(self, path):
