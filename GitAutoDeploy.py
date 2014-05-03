@@ -33,10 +33,13 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         return myClass.config
 
     def do_POST(self):
+        print "\nPost request received"
         url_refs = self.parseRequest()
         for url, ref in url_refs:
             paths = self.getMatchingPaths(url, ref)
+            print "\nFound ",len(paths)," matching paths"
             for path in paths:
+                print "\nUpdating ",path
                 self.pull(path)
                 self.deploy(path)
 
@@ -44,12 +47,15 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         length = int(self.headers.getheader('content-length'))
         body = self.rfile.read(length)
         post = urlparse.parse_qs(body)
-        items = []
-        for itemString in post['payload']:
-            item = json.loads(itemString)
-            items.append((item['repository']['url'], item['ref']))
-        return items
-
+        if 'payload' in post:
+            items = []
+            for itemString in post['payload']:
+                item = json.loads(itemString)
+                items.append((item['repository']['url'], item['ref']))
+            return items
+        else:
+            print "Unknown request type received, body: ",body
+        return []
     def getMatchingPaths(self, repoUrl, ref):
         res = []
         config = self.getConfig()
