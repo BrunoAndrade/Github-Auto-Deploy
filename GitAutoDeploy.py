@@ -33,13 +33,14 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         return myClass.config
 
     def do_POST(self):
-        print "\nPost request received"
+        if(not GitAutoDeploy.quiet):
+            print "\nPost request received"
         url_refs = self.parseRequest()
         for url, ref in url_refs:
             paths = self.getMatchingPaths(url, ref)
-            print "\nFound ",len(paths)," matching paths"
+            if(not GitAutoDeploy.quiet):
+                print "\nFound ",len(paths)," matching paths"
             for path in paths:
-                print "\nUpdating ",path
                 self.pull(path)
                 self.deploy(path)
 
@@ -57,8 +58,9 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         res = []
         config = self.getConfig()
         for repository in config['repositories']:
-            print "\nComparing ", repoUrl, "with ", repository['url']
-            print "\nAnd Comparing ", repository.get('ref', ''), "with ", ('', ref)
+            if(not GitAutoDeploy.quiet):
+                print "\nComparing ", repoUrl, "with ", repository['url']
+                print "\nAnd Comparing ", repository.get('ref', ''), "with ", ('', ref)
             if(repository['url'] == repoUrl and repository.get('ref', '') in ('', ref)):
                 res.append((repository['path'], repository.get('ref','')))
         return res
