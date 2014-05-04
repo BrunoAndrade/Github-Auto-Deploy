@@ -33,12 +33,20 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         return myClass.config
 
     def do_POST(self):
+        if(not GitAutoDeploy.quiet):
+            print "\nPost request received"
         url_refs = self.parseRequest()
+        deployed = 0
         for url, ref in url_refs:
             paths = self.getMatchingPaths(url, ref)
+            if(not GitAutoDeploy.quiet):
+                print "\nFound ",len(paths)," matching path(s)"
             for path in paths:
                 self.pull(path)
                 self.deploy(path)
+                deployed += 1
+        if(deployed > 0):
+            self.respond()
 
     def parseRequest(self):
         length = int(self.headers.getheader('content-length'))
@@ -54,6 +62,9 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
         res = []
         config = self.getConfig()
         for repository in config['repositories']:
+            if(not GitAutoDeploy.quiet):
+                print "\nComparing ", repoUrl, "with ", repository['url']
+                print "Comparing ", repository.get('ref', ''), "with ", ('', ref)
             if(repository['url'] == repoUrl and repository.get('ref', '') in ('', ref)):
                 res.append((repository['path'], repository.get('ref','')))
         return res
@@ -65,8 +76,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
 
     def pull(self, path):
         if(not self.quiet):
-            print "\nPost push request received"
-            print "Updating %s refspec %s" % path
+            print "\nPulling update for %s refspec %s" % path
         call(['cd "' + path[0] + '" && git pull origin "' + path[1] +'"'], shell=True)
 
     def deploy(self, path):
@@ -75,7 +85,7 @@ class GitAutoDeploy(BaseHTTPRequestHandler):
             if(repository['path'] == path[0]):
                 if 'deploy' in repository:
                      if(not self.quiet):
-                         print 'Executing deploy command'
+                         print '\nExecuting deploy command'
                      call(['cd "' + path[0] + '" && ' + repository['deploy']], shell=True)
                 break
 
